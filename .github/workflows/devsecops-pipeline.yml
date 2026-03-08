@@ -1,0 +1,43 @@
+
+name: DevSecOps end to end pipeline
+
+on:
+  workflow_dispatch:
+    
+
+jobs:
+
+  # CI - Continuous Integration with secuity scanning
+  code-quality:
+    uses: ./.github/workflows/code-quality.yml
+
+  secrets-scan:
+    uses: ./.github/workflows/secrets-scan.yml
+    secrets: inherit
+
+  dependency-scan:
+    uses: ./.github/workflows/dependency-scan.yml
+
+  docker-scan:
+    uses: ./.github/workflows/docker-lint.yml
+
+
+  # Build, once the security scans completes
+  build:
+    needs: [code-quality, secrets-scan, dependency-scan, docker-scan]
+    uses: ./.github/workflows/docker-build-push.yml
+    secrets: inherit
+
+
+  # Now after building we shall scan the image using Trivy
+  trivy:
+    needs: [build]
+    uses: ./.github/workflows/image-scan.yml
+
+
+  # Deploy to prod-server
+  deploy:
+    needs: [trivy]
+    uses: ./.github/workflows/deploy-to-server.yml
+    secrets: inherit
+

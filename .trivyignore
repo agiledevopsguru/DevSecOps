@@ -1,0 +1,3 @@
+# ignore the vulnerability for libgc, libc6
+
+CVE-2026-0861
