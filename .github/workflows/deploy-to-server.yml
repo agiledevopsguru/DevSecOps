@@ -10,7 +10,7 @@ jobs:
 
    env:
      DOCKERHUB_USER: ${{ vars.DOCKERHUB_USER }}
-     DOCKER_TAG: ${{ github.event.workflow_run.head_sha }}
+     DOCKER_TAG: ${{ github.sha }}
 
    runs-on: ubuntu-latest
 
@@ -36,7 +36,7 @@ jobs:
   
 
      -  name: Copy the docker-compose file
-        uses: appleboy/scp-action@v1.0.3
+        uses: appleboy/scp-action@v1
         with:
           host: ${{ secrets.EC2_SSH_HOST }}
           username: ${{ secrets.EC2_SSH_USER }}
